@@ -1,0 +1,12 @@
+body {
+  background: #F2F2F2;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
