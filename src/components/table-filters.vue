@@ -12,10 +12,6 @@
         @click="selectFilter(item)"
       >
         {{ item | servingBy }}
-        <!-- add getter to store for servings
-        <p v-if="filter === 'filter'"> (100g serving )</p>
-        <p v-if="filter !== 'iron' || filter !== 'filter' "> (g)</p>
-        <p v-if="filter === 'Iron'"> (%)</p>-->
       </button>
     </div>
   </div>
@@ -23,7 +19,7 @@
 
 <script>
 export default {
-  name: 'TableFilters',
+  name: "TableFilters",
   props: {
     filters: {
       type: Array,
@@ -38,15 +34,19 @@ export default {
       default: false,
     },
   },
-   filters: {
+  filters: {
     servingBy(val) {
-      const servings = ['(100g serving)', '(%)', '(g)']
-      val = val === 'product' ? val + " " + servings[0]
-                : val === "iron" ? val + " " + servings[1]
-                : val + " " + servings[2]
-      return val.charAt(0).toUpperCase() + val.slice(1)
-
-    }
+      const servings = ["(100g serving)", "(%)", "(g)"];
+      val =
+        val === "product"
+          ? val + " " + servings[0]
+          : val === "iron"
+          ? val + " " + servings[1]
+          : val === "calories"
+          ? val
+          : val + " " + servings[2];
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    },
   },
   methods: {
     selectFilter(filter) {
@@ -88,7 +88,7 @@ export default {
     cursor: unset;
     background: transparent;
     border: none;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: "Source Sans Pro", sans-serif;
 
     &--active,
     &:hover {

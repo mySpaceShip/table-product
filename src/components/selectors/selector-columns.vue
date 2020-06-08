@@ -25,7 +25,7 @@
                 selectedItems.includes(item) || showAllColumns,
             }"
           />
-          {{ item | servingBy}}
+          {{ item | servingBy }}
         </label>
       </div>
     </selector>
@@ -33,11 +33,9 @@
 </template>
 
 <script>
-/* eslint-disable */
-
 import Selector from "../selectors/selector";
 export default {
-  name: 'SelectorColumns',
+  name: "SelectorColumns",
   components: {
     Selector,
   },
@@ -55,23 +53,27 @@ export default {
     showAllColumns: true,
     selectedItems: [],
   }),
-   filters: {
+  filters: {
     servingBy(val) {
-      const servings = ['(100g serving)', '(%)', '(g)']
-      val = val === 'product' ? val + " " + servings[0]
-                : val === "iron" ? val + " " + servings[1]
-                : val + " " + servings[2]
-      return val.charAt(0).toUpperCase() + val.slice(1)
-
-    }
+      const servings = ["(100g serving)", "(%)", "(g)"];
+      val =
+        val === "product"
+          ? val + " " + servings[0]
+          : val === "iron"
+          ? val + " " + servings[1]
+          : val === "calories"
+          ? val
+          : val + " " + servings[2];
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    },
   },
   watch: {
     selectedItems(val) {
-        this.$emit("changeColumns", val);
+      this.$emit("changeColumns", val);
     },
     columns(val) {
-     this.selectedItems = this.showAllColumns ? val : [];
-    }
+      this.selectedItems = this.showAllColumns ? val : [];
+    },
   },
   created() {
     this.showAllColumns = this.showAll;
@@ -82,10 +84,10 @@ export default {
       this.selectedItems = this.showAllColumns ? this.columns : [];
     },
     select(column) {
-      const columnHas = this.selectedItems.includes(column)
-      this.selectedItems = columnHas 
+      const columnHas = this.selectedItems.includes(column);
+      this.selectedItems = columnHas
         ? this.selectedItems.filter((el) => el !== column)
-        : [...this.selectedItems ,column]
+        : [...this.selectedItems, column];
       if (this.selectedItems.length === this.columns.length) {
         this.showAllColumns = true;
       } else {

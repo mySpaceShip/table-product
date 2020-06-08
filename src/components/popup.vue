@@ -29,7 +29,6 @@ export default {
 
 <style lang="scss" scoped>
 .popup {
-  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;

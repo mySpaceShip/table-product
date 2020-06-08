@@ -30,8 +30,6 @@
 </template>
 
 <script>
-/* eslint-disable */
-
 import Selector from "./selectors/selector-pagination";
 export default {
   name: 'Pagination',

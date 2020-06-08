@@ -15,13 +15,15 @@
           </div>
         </div>
         <div class="table-filters__right-col">
-          <popup
-            @hide="(hide) => (showDelete = hide)"
-            @confirm="confirmDelete"
-            :show="showDelete"
-          >
-            <p>Are you sure you want to <strong>delete item?</strong></p>
-          </popup>
+          <div class="table__popup">
+            <popup
+              @hide="(hide) => (showDelete = hide)"
+              @confirm="confirmDelete"
+              :show="showDelete"
+            >
+              <p>Are you sure you want to <strong>delete item?</strong></p>
+            </popup>
+          </div>
           <div
             @click="showDelete = true"
             v-if="selectedProducts.length > 0"
@@ -92,11 +94,13 @@
             class="table__row"
           >
             <row
+              v-if="selectedColumns.length !== 0"
+              @selectId="(id) => (rowId = id)"
               @select="collectRemove"
-              @hidePopup="(id) => deletedProduct = id"
-              :showPopup="pagedProducts.includes(el => el.id === deletedProduct)"
+              @hide="(id) => rowId = id"
               :items="item"
               :selectedItem="selectedProducts.includes(item.id)"
+              :rowId="rowId"
               :sorted-filter="filter"
             />
           </div>
@@ -107,29 +111,22 @@
 </template>
 
 <script>
-/* eslint-disable */
-import ClickOutside from "vue-click-outside";
-
 import Filters from "./table-filters";
 import Pagination from "./Pagination";
 import SelectorColumns from "./selectors/selector-columns";
 import Row from "./table-row";
 import Popup from "./popup";
-import { mapActions, mapGetters } from "vuex";
 import _ from "lodash";
 
 export default {
-  name: 'Table',
-  directives: {
-    ClickOutside,
-  },
+  name: "Table",
   components: {
     SelectorColumns,
     Filters,
     Pagination,
     Row,
     Popup,
-  },  
+  },
   data: () => ({
     pageSettings: {
       pages: [10, 20, 15, 5, 4, 3, 2, 17],
@@ -146,8 +143,8 @@ export default {
     filter: "Product",
     selectedProducts: [],
     showDelete: false,
-    deletedProduct: ''
-  }),
+    rowId: -1,
+  }), 
   filters: {
     servingBy(val) {
       const servings = ["(100g serving)", "(%)", "(g)"];
@@ -156,6 +153,8 @@ export default {
           ? val + " " + servings[0]
           : val === "iron"
           ? val + " " + servings[1]
+          : val === 'calories' 
+          ? val
           : val + " " + servings[2];
       return val.charAt(0).toUpperCase() + val.slice(1);
     },
@@ -227,7 +226,7 @@ export default {
         ? []
         : this.pagedProducts.map((el) => {
             let id;
-            this.pagedProducts.forEach((innerEl) => (id = el.id));
+            this.pagedProducts.forEach(() => (id = el.id));
             return id;
           });
     },
@@ -398,13 +397,14 @@ export default {
       margin-bottom: 0;
     }
   }
-}
-</style>
 
-<style lang="scss">
-.popup {
-  max-width: 254px;
-  left: 0;
-  top: 60px;
+  &__popup {
+    position: absolute;
+    max-width: 254px;
+    width: 100%;
+    left: 25px;
+    top: 46px;
+    z-index: 10;
+  }
 }
 </style>

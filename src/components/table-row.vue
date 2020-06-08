@@ -1,7 +1,6 @@
 <template>
   <div class="table-row">
     <label
-      v-if="itemsAsArr.length !== 0"
       @click.prevent="select"
       class="table-row__checkbox"
     >
@@ -31,16 +30,17 @@
       {{ item }}
     </div>
     <div
-      @click="opened = true"
-      v-click-outside="test"
+      @click="$emit('selectId', items.id)"
       class="table-row__delete-block"
     >
       <img src="../../public/images/rubbish-bin.svg" />
       <span>delete</span>
+    </div>
+    <div class="table-row__popup">
       <popup
-        v-click-outside="(show = false)"
-        :show="opened && show"
-        @confirm="show"
+        @hide="$emit('hide', -1)"
+        @confirm="confirmDelete"
+        :show="rowId === items.id"
         class="table-row__popup"
       >
         <p>Are you sure you want to <strong>delete item?</strong></p>
@@ -50,15 +50,10 @@
 </template>
 
 <script>
-/* eslint-disable */
-import ClickOutside from "vue-click-outside";
 import Popup from "./popup";
 
 export default {
-  name: 'TableRow',
-  directives: {
-    ClickOutside,
-  },
+  name: "TableRow",
   components: {
     Popup,
   },
@@ -75,15 +70,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    showPopup: {
-      type: Boolean,
-      default: false,
+    rowId: {
+      type: Number,
+      default: -1,
     },
   },
   data: () => ({
     selected: false,
-    show: false,
-    testShow: false,
   }),
   computed: {
     itemsAsArr() {
@@ -99,21 +92,16 @@ export default {
     },
   },
   methods: {
-    test() {
-      console.log(true);
-      
-    },
     select() {
       let rowId = this.$refs.rowItem[0].getAttribute("data-id");
       rowId = parseInt(rowId);
       this.$emit("select", rowId);
     },
-    removeItem() {
-      this.show = true;
+    confirmDelete() {
       let rowId = this.$refs.rowItem[0].getAttribute("data-id");
       rowId = parseInt(rowId);
       this.$store.dispatch("REMOVE_PRODUCT_BY_ID", rowId);
-    },
+    }
   },
 };
 </script>
@@ -126,12 +114,6 @@ export default {
   width: 100%;
   padding: 18px 22px 17px 37px;
   box-sizing: border-box;
-
-  &:hover {
-    .table-row__delete-block {
-      opacity: 1;
-    }
-  }
 
   &__item {
     margin-right: 20px;
@@ -216,6 +198,10 @@ export default {
   }
 
   &__popup {
+    position: absolute;
+    z-index: 10;
+    top: 28px;
+    right: -84px;
     p {
       white-space: nowrap;
     }
